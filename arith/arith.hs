@@ -5,18 +5,29 @@ data Term = Ttrue | Tfalse | Zero
             deriving (Show)
 
 evaluate :: Term -> Term
+
 evaluate Ttrue = Ttrue
 evaluate Tfalse = Tfalse
 evaluate Zero = Zero
-evaluate (Succ t) = Succ (evaluate t)
-evaluate (Pred t) = Pred (evaluate t)
+
+evaluate (Succ t) =
+    let r = evaluate t
+    in case r of
+        (Pred x) -> x
+        _ -> Succ r
+
+evaluate (Pred t) =
+    let r = evaluate t
+    in case r of
+        (Succ x) -> x
+        _ -> Pred r
+
 evaluate (IsZero Zero) = Ttrue
 evaluate (IsZero t) =
     let r = evaluate t
-    in
-        case r of
-            Zero -> Ttrue
-            _ -> Tfalse
+    in case r of
+        Zero -> Ttrue
+        _ -> Tfalse
 
 evaluate (If t1 t2 t3) =
     let r = evaluate t1
@@ -38,13 +49,17 @@ reprInt (Succ t) = reprInt t + 1
 reprInt (Pred t) = reprInt t - 1
 
 main = do
+    -- case 1
     putStrLn $ repr $ evaluate
             (If (IsZero (Succ (Succ Zero)))
                 (Succ Zero)
                 (Pred Zero))
+    -- case 2
     putStrLn $ repr $ evaluate
             (IsZero (Succ (Pred Zero)))
+    -- case 3
     putStrLn $ repr $ evaluate
             (If Ttrue
                 (IsZero Zero)
                 Zero)
+
