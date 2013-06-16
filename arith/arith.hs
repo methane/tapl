@@ -37,17 +37,23 @@ evaluate (If t1 t2 t3) =
         Vfalse -> evaluate t3
         _ -> Verror (show t1 ++ " is not a boolean")
 
+repr :: Value -> String
+repr Vtrue = "True"
+repr Vfalse = "False"
+repr (Vinteger a) = show a
+repr (Verror s) = "Error: " ++ s
+
 main = do
     -- case 1
-    print $ evaluate
+    putStrLn $ repr $ evaluate
             (If (IsZero (Succ (Succ Zero)))
                 (Succ Zero)
                 (Pred Zero))
     -- case 2
-    print $ evaluate
+    putStrLn $ repr $ evaluate
             (IsZero (Succ (Pred Zero)))
     -- case 3
-    print $ evaluate
+    putStrLn $ repr $ evaluate
             (If Ttrue
                 (IsZero Zero)
                 Zero)
